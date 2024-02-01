@@ -1,0 +1,71 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to bottom, #a8a8a8 0%, #d5c6c6 100%);
+}
+
+#container {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    width: 100vw;
+    height: 100%;
+}
+
+#pongCanvas {
+    display: block;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-left: 100px;
+    max-height: 90vh;
+    aspect-ratio: 1;
+}
+
+.sidebar {
+    margin-left: 50px;
+    height: 100%;
+    margin-top: 20%;
+    font-family: monospace;
+    color: #172b36;    font-family: monospace;
+    font-size: 16px;
+    flex-basis: 400px;
+    color: #172b36;
+
+}
+
+
+#made {
+    text-align: center;
+    line-height: 1.5;
+    margin-top: auto;
+    margin-bottom: 20px;
+    font-size: 10px;
+}
+
+#made a {
+    color: #172b36;
+}
+.counter {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    color: #172b36;
+}
+
+.controls {
+    margin-top: 20px;
+}
+
+.controls form {
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+}

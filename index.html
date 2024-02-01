@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Pong wars | Koen van Gilst</title>
+    <meta
+            name="description"
+            content="The eternal battle between day and night, good and bad. Written in JavaScript with some HTML & CSS in one index.html. Feel free to reuse the code and create your own version."
+    />
+    <link rel="canonical" href="https://pong-wars.koenvangilst.nl/"/>
+    <link rel="author" href="https://koenvangilst.nl"/>
+    <meta name="theme-color" content="#172B36"/>
+    <meta name="creator" content="Koen van Gilst"/>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+<div id="container">
+    <canvas id="pongCanvas" width="800" height="800"></canvas>
+
+    <aside class="sidebar">
+        <div class="score">
+            <b>Score</b>
+            <div id="iroh"></div>
+            <div id="aang"></div>
+            <div id="tylee"></div>
+            <div id="soka"></div>
+        </div>
+
+        <div class="counter">
+            <b>Time Running</b>
+            <label id="hours">00</label>
+            <label id="minutes">00</label>
+            <label id="seconds">00</label>
+        </div>
+        <div class="controls">
+            <b>Speed</b>
+            <form id="speed">
+                <label for="30"><input type="radio" id="30" name="speed" value="30">
+                    Slow</label>
+                <label for="60"><input type="radio" id="60" name="speed" value="60">
+                    Medium</label>
+                <label for="200"><input type="radio" id="200" name="speed" value="5000" checked>
+                    Fast</label>
+            </form>
+        </div>
+    </aside>
+
+</div>
+</body>
+
+<script src="script.js"></script>
+
+</html>
