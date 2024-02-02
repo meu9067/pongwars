@@ -1,91 +1,91 @@
 // Source palette: https://twitter.com/AlexCristache/status/1738610343499157872
 const colorPalette = {
-    TyLee: "#AE2F24",
-    TyLeeBall: "#BB7169",
-
-    IrohBall: "#737E44",
-    Iroh: "#1E3414",
-
-    Aang: "#EE7223",
-    AangBall: "#F39C65",
-
-    SokaBall: "#488ECB",
-    Soka: "#244766",
-
-
+    Fire: "#AE2F24",
+    FireBall: "#BB7169",
+    EarthBall: "#737E44",
+    Earth: "#1E3414",
+    Air: "#EE7223",
+    AirBall: "#F39C65",
+    WaterBall: "#488ECB",
+    Water: "#244766",
 };
 
 // Idea for Pong wars: https://twitter.com/nicolasdnl/status/1749715070928433161
 
 const canvas = document.getElementById("pongCanvas");
 const ctx = canvas.getContext("2d");
-const scoreIroh = document.getElementById("iroh");
-const scoreAang = document.getElementById("aang");
-const scoreTylee = document.getElementById("tylee");
-const scoreSoka = document.getElementById("soka");
 
-const IROH_COLOR = colorPalette.Iroh;
-const IROH_BALL_COLOR = colorPalette.IrohBall;
+const winner = document.getElementById("winner");
+const keysNames = ["Earth", "Water", "Fire", "Air"]
 
-const AANG_COLOR = colorPalette.Aang;
-const AANG_BALL_COLOR = colorPalette.AangBall;
-
-const SOKA_COLOR = colorPalette.Soka;
-const SOKA_BALL_COLOR = colorPalette.SokaBall;
-
-const TYLEE_COLOR = colorPalette.TyLee;
-const TYLEE_BALL_COLOR = colorPalette.TyLeeBall;
+const colors = Object.fromEntries(keysNames.map(k => [k, colorPalette[k]]))
+const colorBalls = Object.fromEntries(keysNames.map(k => [k, colorPalette[`${k}Ball`]]))
 
 const SQUARE_SIZE = 20;
-
 const numSquaresX = Math.round(canvas.width / SQUARE_SIZE);
 const numSquaresY = Math.round(canvas.height / SQUARE_SIZE);
 
+const valueMin = 0
+const valueMax = (numSquaresX * numSquaresY) / 4;
+const ScoreMax = Object.fromEntries(keysNames.map(k => [k, valueMin]))
+const ScoreMin = Object.fromEntries(keysNames.map(k => [k, valueMax]))
+
 let squares = [];
 
-let speed = document.querySelector('input[name="speed"]:checked').value;
-const speedForm = document.getElementById('speed');
+let speedInput = document.querySelector('input[name="speed"]:checked').value;
+const speed = document.getElementById('speed');
+
+
+// Ball position, velocity and direction
+let x1 = canvas.width / 4;
+let y1 = canvas.height / 4;
+let dx1 = randomNumber(5, 15);
+let dy1 = randomNumber(5, 15);
+
+let x2 = (canvas.width / 4) * 3;
+let y2 = canvas.height / 4;
+let dx2 = randomNumber(5, 15);
+let dy2 = randomNumber(5, 15);
+
+let x3 = canvas.width / 4;
+let y3 = (canvas.height / 4) * 3;
+let dx3 = randomNumber(5, 15);
+let dy3 = randomNumber(5, 15);
+
+let x4 = (canvas.width / 4) * 3;
+let y4 = (canvas.height / 4) * 3;
+let dx4 = randomNumber(5, 15);
+let dy4 = randomNumber(5, 15);
+
+
+
+//  Function used for speed and direction
+function randomNumber(min, max) {
+    var num = Math.floor(Math.random() * (max - min + 1)) + min;
+    var isNegative = Math.random() < 0.5;
+    return isNegative ? -num : num;
+}
+
+// Function to get the percentage Values
+function percentage(x) {
+    return Math.round((x * 100) / (numSquaresX * numSquaresY));
+}
 
 
 // Draw of the teams fields
-
-for (let i = 0; i < numSquaresX; i++) {
-    squares[i] = [];
-    for (let j = 0; j < numSquaresY; j++) {
-        if (i < numSquaresX / 2) {
-            squares[i][j] = j < numSquaresY / 2 ? IROH_COLOR : AANG_COLOR;
-        } else {
-            squares[i][j] = j < numSquaresY / 2 ? SOKA_COLOR : TYLEE_COLOR;
+function teamsFields() {
+    for (let i = 0; i < numSquaresX; i++) {
+        squares[i] = [];
+        for (let j = 0; j < numSquaresY; j++) {
+            if (i < numSquaresX / 2) {
+                squares[i][j] = j < numSquaresY / 2 ? colors.Earth : colors.Air;
+            } else {
+                squares[i][j] = j < numSquaresY / 2 ? colors.Water : colors.Fire;
+            }
         }
     }
 }
 
-// Random Function used for speed and direction
-function randomIntFromInterval(min, max) { // min and max included
-    return Math.floor(Math.random() * (max - min + 1) + min)
-}
-
-// Ball position, velocity and direction
-
-let x1 = canvas.width / 4;
-let y1 = canvas.height / 4;
-let dx1 = randomIntFromInterval(5, 15);
-let dy1 = randomIntFromInterval(5, 15);
-
-let x2 = (canvas.width / 4) * 3;
-let y2 = canvas.height / 4;
-let dx2 = randomIntFromInterval(5, 15);
-let dy2 = randomIntFromInterval(5, 15);
-
-let x3 = canvas.width / 4;
-let y3 = (canvas.height / 4) * 3;
-let dx3 = randomIntFromInterval(5, 15);
-let dy3 = randomIntFromInterval(5, 15);
-
-let x4 = (canvas.width / 4) * 3;
-let y4 = (canvas.height / 4) * 3;
-let dx4 = randomIntFromInterval(5, 12.5);
-let dy4 = randomIntFromInterval(5, 12.5);
 
 
 function drawBall(x, y, color) {
@@ -109,7 +109,9 @@ function drawSquares() {
             );
         }
     }
+
 }
+
 
 function updateSquareAndBounce(x, y, dx, dy, color) {
     let updatedDx = dx;
@@ -140,60 +142,6 @@ function updateSquareAndBounce(x, y, dx, dy, color) {
     return {dx: updatedDx, dy: updatedDy};
 }
 
-function percentage(x){
-    return Math.round((x * 100) / (numSquaresX * numSquaresY));
-}
-
-let IrohScoreMax = 0;
-let SokaScoreMax = 0;
-let TyLeeScoreMax = 0;
-let AangScoreMax = 0;
-
-function updateScoreElement() {
-    let IrohScore = 0;
-    let SokaScore = 0;
-    let TyLeeScore = 0;
-    let AangScore = 0;
-    for (let i = 0; i < numSquaresX; i++) {
-        for (let j = 0; j < numSquaresY; j++) {
-            if (squares[i][j] === IROH_COLOR) {
-                IrohScore++;
-                if (IrohScore > IrohScoreMax) {
-                    IrohScoreMax = IrohScore
-                }
-
-
-
-            } else if (squares[i][j] === SOKA_COLOR) {
-                SokaScore++;
-                if (SokaScore >  SokaScoreMax) {
-                    SokaScoreMax = SokaScore
-                }
-
-
-            } else if (squares[i][j] === TYLEE_COLOR) {
-                TyLeeScore++;
-                if (TyLeeScore > TyLeeScoreMax) {
-                    TyLeeScoreMax = TyLeeScore
-                }
-
-
-            } else if (squares[i][j] === AANG_COLOR) {
-                AangScore++;
-                if (AangScore > AangScoreMax) {
-                    AangScoreMax = AangScore
-                }
-
-            }
-        }
-    }
-
-    scoreIroh.innerHTML = `Earth: ${percentage(IrohScore)}% <small><b>(${percentage(IrohScoreMax)}% Max) </b></small>`;
-    scoreAang.innerHTML = `Air: ${percentage(AangScore)}% <small><b>(${percentage(AangScoreMax)}% Max) </b></small>`;
-    scoreTylee.innerHTML = `Fire: ${percentage(TyLeeScore)}% <small><b>(${percentage(TyLeeScoreMax)}% Max) </b></small>`;
-    scoreSoka.innerHTML = `Water: ${percentage(AangScore)}% <small><b>(${percentage(AangScoreMax)}% Max) </b></small>`;
-    }
-
 function checkBoundaryCollision(x, y, dx, dy) {
     if (x + dx > canvas.width - SQUARE_SIZE / 2 || x + dx < SQUARE_SIZE / 2) {
         dx = -dx;
@@ -208,29 +156,122 @@ function checkBoundaryCollision(x, y, dx, dy) {
     return {dx: dx, dy: dy};
 }
 
+function maxScore(Score) {
+    for (key of Object.keys(ScoreMax)) {
+        if (Score[key] > ScoreMax[key]) {
+            ScoreMax[key] = (Score[key]);
+        }
+    }
+}
+
+function minScore(Score) {
+    for (key of Object.keys(ScoreMin)) {
+        if (Score[key] < ScoreMin[key]) {
+            ScoreMin[key] = (Score[key]);
+        }
+    }
+}
+
+function winnerScore() {
+    const maxValue = Math.max(...Object.values(ScoreMax));
+    const maxElement = Object.keys(ScoreMax).find(key => ScoreMax[key] === maxValue);
+    winner.innerHTML = `<b>${maxElement} with ${percentage(maxValue)}%</b>`;
+}
+
+function updateScoreElement() {
+
+    const Score = Object.fromEntries(keysNames.map(k => [k, valueMin]))
+
+    for (let i = 0; i < numSquaresX; i++) {
+        for (let j = 0; j < numSquaresY; j++) {
+
+            // Update Values
+            keysNames.map(item => {
+                    if (squares[i][j] === colors[item]) {
+                        Score[item]++;
+                    }
+                }
+            );
+
+            // Update Scores
+            for (key of Object.keys(ScoreMax)) {
+                if (Score[key] > ScoreMax[key]) {
+                    ScoreMax[key] = (Score[key]);
+                }
+            }
+        }
+    }
+
+    for (key of Object.keys(Score)) {
+        document.getElementById(String(key)).innerHTML = `${key}: ${percentage(Score[key])}% <small><b>(${percentage(ScoreMax[key])}% Max | ${percentage(ScoreMin[key])}% Min) </b></small>`;
+    }
+
+   maxScore(Score);
+   minScore(Score);
+   winnerScore();
+}
+function animationSpeed() {
+    speed.addEventListener('change', (event) => {
+        speedInput = event.target.value;
+    });
+
+    window.requestAnimationFrame(() => {
+        setTimeout(this.draw.bind(this), (1000 / Number(speedInput)));
+    });
+}
+
+
+// Timer
+
+var minutesLabel = document.getElementById("minutes");
+var secondsLabel = document.getElementById("seconds");
+var hoursLabel = document.getElementById("hours");
+var totalSeconds = 0;
+
+
+function setTime() {
+    ++totalSeconds;
+    d = Number(totalSeconds);
+    var h = Math.floor(d / 3600);
+    var m = Math.floor(d % 3600 / 60);
+    var s = Math.floor(d % 3600 % 60);
+
+    var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours ") : "";
+    var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes ") : "";
+    var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+
+    secondsLabel.innerHTML = sDisplay;
+    minutesLabel.innerHTML = mDisplay;
+    hoursLabel.innerHTML = hDisplay;
+}
+
+
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     drawSquares();
-    //
-    drawBall(x1, y1, IROH_BALL_COLOR);
-    let bounce1 = updateSquareAndBounce(x1, y1, dx1, dy1, IROH_COLOR);
+
+    drawBall(x1, y1, colorBalls.Earth);
+    let bounce1 = updateSquareAndBounce(x1, y1, dx1, dy1, colors.Earth);
     dx1 = bounce1.dx;
     dy1 = bounce1.dy;
 
-    drawBall(x2, y2, SOKA_BALL_COLOR);
-    let bounce2 = updateSquareAndBounce(x2, y2, dx2, dy2, SOKA_COLOR);
+    drawBall(x2, y2, colorBalls.Water);
+    let bounce2 = updateSquareAndBounce(x2, y2, dx2, dy2, colors.Water);
     dx2 = bounce2.dx;
     dy2 = bounce2.dy;
 
-    drawBall(x3, y3, AANG_BALL_COLOR);
-    let bounce3 = updateSquareAndBounce(x3, y3, dx3, dy3, AANG_COLOR);
+    drawBall(x3, y3, colorBalls.Air);
+    let bounce3 = updateSquareAndBounce(x3, y3, dx3, dy3, colors.Air);
     dx3 = bounce3.dx;
     dy3 = bounce3.dy;
 
-    drawBall(x4, y4, TYLEE_BALL_COLOR);
-    let bounce4 = updateSquareAndBounce(x4, y4, dx4, dy4, TYLEE_COLOR);
+    drawBall(x4, y4, colorBalls.Fire);
+    let bounce4 = updateSquareAndBounce(x4, y4, dx4, dy4, colors.Fire);
     dx4 = bounce4.dx;
     dy4 = bounce4.dy;
+
 
     let boundary1 = checkBoundaryCollision(x1, y1, dx1, dy1);
     dx1 = boundary1.dx;
@@ -261,45 +302,12 @@ function draw() {
 
     updateScoreElement();
 
+    animationSpeed();
 
-    // Change the speed of the animation
-
-    speedForm.addEventListener('change', (event) => {
-        speed = event.target.value;
-    });
-
-    window.requestAnimationFrame(() => {
-        setTimeout(this.draw.bind(this), (1000 / Number(speed)));
-    });
 
 }
-
+teamsFields();
 requestAnimationFrame(draw);
-
-
-// Timer
-
-var minutesLabel = document.getElementById("minutes");
-var secondsLabel = document.getElementById("seconds");
-var hoursLabel = document.getElementById("hours");
-
-var totalSeconds = 0;
+setTime();
 setInterval(setTime, 1000);
 
-function setTime() {
-    ++totalSeconds;
-    d = Number(totalSeconds);
-    var h = Math.floor(d / 3600);
-    var m = Math.floor(d % 3600 / 60);
-    var s = Math.floor(d % 3600 % 60);
-
-    var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours ") : "";
-    var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes ") : "";
-    var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
-
-    secondsLabel.innerHTML = sDisplay;
-    minutesLabel.innerHTML = mDisplay;
-    hoursLabel.innerHTML = hDisplay;
-}
-
-setTime();
